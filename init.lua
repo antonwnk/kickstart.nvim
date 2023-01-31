@@ -53,6 +53,7 @@ require('packer').startup(function(use)
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
+  use 'tpope/vim-surround' -- Nice shortcuts to surround with certain character
 
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
@@ -101,6 +102,16 @@ vim.o.hlsearch = false
 -- Make line numbers default
 vim.wo.number = true
 
+-- Set relative line numbers
+vim.o.relativenumber = true
+
+-- Set top/bottom margin for scrolling
+vim.o.scrolloff = 12
+
+-- Set default split directions to something we're used to
+vim.o.splitbelow = true
+vim.o.splitright = true
+
 -- Enable mouse mode
 vim.o.mouse = 'a'
 
@@ -135,6 +146,52 @@ vim.g.maplocalleader = ' '
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+
+-- Preferred insert mode exit shortcut
+vim.keymap.set('i', 'kj', '<Esc>')
+vim.keymap.set('i', 'kJ', '<Esc>')
+vim.keymap.set('i', 'Kj', '<Esc>')
+vim.keymap.set('i', 'KJ', '<Esc>')
+
+-- Open file view like the almighty Primeagen
+vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+
+-- Open Git Status like the almighty Primeagen
+vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
+
+-- Move around selected lines
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+-- Yank to line end
+vim.keymap.set('n', 'Y', 'yg$')
+
+-- Keep cursor in place when line-joining
+vim.keymap.set('n', 'J', 'mzJ`z')
+
+-- Keep search result in mid-screen while jumping through hits
+vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('n', 'N', 'Nzzzv')
+
+-- Paste over selection without overwriting
+vim.keymap.set('x', '<leader>p', '"_dP')
+-- Delete without overwriting
+vim.keymap.set('n', '<leader>d', '"_d')
+vim.keymap.set('v', '<leader>d', '"_d')
+vim.keymap.set('n', '<leader>D', '"_D')
+
+-- Quickfix navigation
+-- vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
+-- vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
+-- vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz')
+-- vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
+
+-- Yank in system clipboard
+vim.keymap.set('n', '<leader>y', '"+y')
+vim.keymap.set('v', '<leader>y', '"+y')
+vim.keymap.set('n', '<leader>Y', '"+Y')
+
+vim.keymap.set('n', '<leader>fm', '<cmd>!black %<CR>')
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -339,7 +396,7 @@ end
 local servers = {
   -- clangd = {},
   -- gopls = {},
-  -- pyright = {},
+  pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
 
