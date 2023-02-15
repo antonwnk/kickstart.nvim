@@ -43,17 +43,25 @@ require('packer').startup(function(use)
     after = 'nvim-treesitter',
   }
 
+  use {
+    'jose-elias-alvarez/null-ls.nvim',
+    requires = { 'nvim-lua/plenary.nvim' }
+  }
+
   -- Git related plugins
   use 'tpope/vim-fugitive'
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
-  use 'navarasu/onedark.nvim' -- Theme inspired by Atom
+  -- Other plugins
+  -- use 'navarasu/onedark.nvim' -- Theme inspired by Atom
+  use { "catppuccin/nvim", as = "catppuccin" }  -- Fancy cool theme
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
   use 'tpope/vim-surround' -- Nice shortcuts to surround with certain character
+  -- use 'sidebar-nvim/sidebar.nvim' -- Sidebar to explore symbols, diagnostics etc.
 
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
@@ -131,7 +139,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd [[colorscheme onedark]]
+vim.cmd [[colorscheme catppuccin-mocha]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -158,6 +166,9 @@ vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 
 -- Open Git Status like the almighty Primeagen
 vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
+
+-- Open sidebar shortcut
+-- vim.keymap.set('n', '<leader>ps', require('sidebar-nvim').toggle )
 
 -- Move around selected lines
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
@@ -239,6 +250,42 @@ require('gitsigns').setup {
     topdelete = { text = '‾' },
     changedelete = { text = '~' },
   },
+  on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation 
+    map('n', '[c', function()
+      if vim.wo.diff then return '[c' end
+      vim.schedule(function() gs.prev_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', ']c', function()
+      if vim.wo.diff then return ']c' end
+      vim.schedule(function() gs.next_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    -- Actions
+    map({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>')
+    map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>')
+    map('n', '<leader>hu', gs.undo_stage_hunk)
+    map('n', '<leader>hp', gs.preview_hunk)
+    map('n', '<leader>hd', gs.diffthis)
+    map('n', '<leader>hD', function() gs.diffthis('~') end)
+    map('n', '<leader>hS', gs.stage_buffer)
+    map('n', '<leader>hR', gs.reset_buffer)
+    map('n', '<leader>td', gs.toggle_deleted)
+
+    -- Text object
+    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+  end
 }
 
 -- [[ Configure Telescope ]]
@@ -278,7 +325,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'help' },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -396,11 +443,13 @@ end
 local servers = {
   -- clangd = {},
   -- gopls = {},
+  bashls = {},
   pyright = {},
+  yamlls = {},
   -- rust_analyzer = {},
   -- tsserver = {},
 
-  sumneko_lua = {
+  lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
@@ -480,6 +529,41 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+local null_ls = require('null-ls')
+null_ls.setup({
+  sources = {
+    null_ls.builtins.diagnostics.ruff,  -- Fast python linter
+    null_ls.builtins.diagnostics.codespell,  -- Typo detector in code
+    -- null_ls.builtins.diagnostics.pydocstyle,  -- self-explanatory
+    null_ls.builtins.formatting.stylua,  -- Style checker for Lua
+    -- null_ls.builtins.formatting.black,  -- Code formatter for Python
+    null_ls.builtins.formatting.ruff,  -- Code formatter for Python
+    null_ls.builtins.formatting.usort,  -- Import sorter for Python
+    null_ls.builtins.formatting.prettierd,  -- Formatter for the browser langs (excl. Rust)
+    null_ls.builtins.completion.spell,  -- Spelling completion
+    -- null_ls.builtins.code_actions.gitsigns  -- adds code actions for the gitsigns hunk operations
+  }
+})
+
+-- Setup sidebar
+-- require('sidebar-nvim').setup({
+--   disable_default_keybindings = 1,
+--   bindings = { ['q'] = function() require('sidebar-nvim').close() end },
+--   open = false,
+--   side = 'left',
+--   initial_width = 35,
+--   hide_statusline = false,
+--   update_interval = 1000,
+--   sections = { 'datetime', 'git', 'diagnostics', 'symbols' },
+--   section_separator = { '', '-----', '' },
+--   section_title_separator = { '' },
+--   containers = {
+--     attach_shell = '/bin/sh', show_all = true, interval = 5000,
+--   },
+--   datetime = { format = '%a %b %d, %H:%M', clocks = { { name = 'local' } } },
+--   todos = { ignored_paths = { '~' } },
+-- })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
