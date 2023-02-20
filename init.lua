@@ -170,6 +170,9 @@ vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
 -- Open sidebar shortcut
 -- vim.keymap.set('n', '<leader>ps', require('sidebar-nvim').toggle )
 
+-- Delete buffer
+vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>')
+
 -- Move around selected lines
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
@@ -202,7 +205,6 @@ vim.keymap.set('n', '<leader>y', '"+y')
 vim.keymap.set('v', '<leader>y', '"+y')
 vim.keymap.set('n', '<leader>Y', '"+Y')
 
-vim.keymap.set('n', '<leader>fm', '<cmd>!black %<CR>')
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -407,6 +409,7 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
+  nmap('<leader>fb', vim.lsp.buf.format, '[F]ormat [B]uffer')
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
@@ -536,7 +539,7 @@ null_ls.setup({
     null_ls.builtins.diagnostics.ruff,  -- Fast python linter
     null_ls.builtins.diagnostics.codespell,  -- Typo detector in code
     -- null_ls.builtins.diagnostics.pydocstyle,  -- self-explanatory
-    null_ls.builtins.formatting.stylua,  -- Style checker for Lua
+    -- null_ls.builtins.formatting.stylua,  -- Style checker for Lua
     -- null_ls.builtins.formatting.black,  -- Code formatter for Python
     null_ls.builtins.formatting.ruff,  -- Code formatter for Python
     null_ls.builtins.formatting.usort,  -- Import sorter for Python
