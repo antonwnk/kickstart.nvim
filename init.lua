@@ -200,10 +200,10 @@ vim.keymap.set('v', '<leader>d', '"_d')
 vim.keymap.set('n', '<leader>D', '"_D')
 
 -- Quickfix navigation
--- vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
--- vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
--- vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz')
--- vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
+vim.keymap.set('n', '<leader>j', '<cmd>lnext<CR>zz')
+vim.keymap.set('n', '<leader>k', '<cmd>lprev<CR>zz')
+vim.keymap.set('n', '<leader>J', '<cmd>cnext<CR>zz')
+vim.keymap.set('n', '<leader>K', '<cmd>cprev<CR>zz')
 
 -- Yank in system clipboard
 vim.keymap.set('n', '<leader>y', '"+y')
@@ -466,7 +466,9 @@ local servers = {
   bashls = {},
   pyright = {},
   yamlls = {},
-  -- rust_analyzer = {},
+  rust_analyzer = {
+    procMacro = { enable = true },
+  },
   -- tsserver = {},
 
   lua_ls = {
