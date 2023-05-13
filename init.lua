@@ -135,6 +135,9 @@ require('lazy').setup({
     end,
   },
 
+  -- Show code context on top of your screen
+  { 'nvim-treesitter/nvim-treesitter-context', dependencies = { 'nvim-treesitter/nvim-treesitter' } },
+
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -611,7 +614,7 @@ null_ls.setup({
     -- null_ls.builtins.formatting.ruff,  -- Code formatter for Python
     null_ls.builtins.formatting.usort,  -- Import sorter for Python
     null_ls.builtins.formatting.prettierd,  -- Formatter for the browser langs (excl. Rust)
-    null_ls.builtins.completion.spell,  -- Spelling completion
+    -- null_ls.builtins.completion.spell,  -- Spelling completion
     -- null_ls.builtins.code_actions.gitsigns  -- adds code actions for the gitsigns hunk operations
   }
 })
