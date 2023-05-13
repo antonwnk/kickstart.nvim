@@ -35,6 +35,9 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
+  -- Shortcuts to surround text with motions and correct existing quotes
+  'tpope/vim-surround',
+
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   { -- LSP Configuration & Plugins
@@ -230,8 +233,8 @@ vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
 -- Open sidebar shortcut
 -- vim.keymap.set('n', '<leader>ps', require('sidebar-nvim').toggle )
 
--- Delete buffer
-vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>')
+-- Delete buffer keeping split open
+vim.keymap.set('n', '<leader>bd', '<cmd>bn | bd#<CR>')
 
 -- Move around selected lines
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
@@ -365,7 +368,7 @@ require('telescope').setup {
           ['<C-d>'] = require('telescope.actions').delete_buffer,
         },
         n = {
-          ['<d>'] = require('telescope.actions').delete_buffer,
+          ['d'] = require('telescope.actions').delete_buffer,
         }
       }
     }
