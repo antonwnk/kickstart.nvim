@@ -69,7 +69,7 @@ require('lazy').setup({
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
 
-  -- Adds git releated signs to the gutter, as well as utilities for managing changes
+  -- Adds git related signs to the gutter, as well as utilities for managing changes
   'lewis6991/gitsigns.nvim',
 
   { -- theme I like
@@ -115,6 +115,9 @@ require('lazy').setup({
 
   -- Show code context on top of your screen
   { 'nvim-treesitter/nvim-treesitter-context', dependencies = { 'nvim-treesitter/nvim-treesitter' } },
+
+  -- Java lsp stuff
+  'mfussenegger/nvim-jdtls',
 
   -- require 'kickstart.plugins.autoformat',
   require 'kickstart.plugins.debug',
