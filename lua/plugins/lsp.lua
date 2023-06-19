@@ -119,16 +119,21 @@ end
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
-  -- clangd = {},
-  -- gopls = {},
+  clangd = {},
+  gopls = {
+    completeUnimported = true,
+    usePlaceholders = true,
+    analyses = {
+      unusedparams = true,
+    },
+  },
   bashls = {},
   pyright = {},
   yamlls = {},
   rust_analyzer = {
     procMacro = { enable = true },
   },
-  -- tsserver = {},
-
+  tsserver = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -136,22 +141,6 @@ local servers = {
     },
   },
 }
-
-local null_ls = require('null-ls')
-null_ls.setup({
-  sources = {
-    null_ls.builtins.diagnostics.ruff,  -- Fast python linter
-    null_ls.builtins.diagnostics.codespell,  -- Typo detector in code
-    -- null_ls.builtins.diagnostics.pydocstyle,  -- self-explanatory
-    -- null_ls.builtins.formatting.stylua,  -- Style checker for Lua
-    -- null_ls.builtins.formatting.black,  -- Code formatter for Python
-    -- null_ls.builtins.formatting.ruff,  -- Code formatter for Python
-    null_ls.builtins.formatting.usort,  -- Import sorter for Python
-    null_ls.builtins.formatting.prettierd,  -- Formatter for the browser langs (excl. Rust)
-    -- null_ls.builtins.completion.spell,  -- Spelling completion
-    -- null_ls.builtins.code_actions.gitsigns  -- adds code actions for the gitsigns hunk operations
-  }
-})
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -174,11 +163,27 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+local null_ls = require('null-ls')
+null_ls.setup({
+  sources = {
+    null_ls.builtins.diagnostics.ruff,  -- Fast python linter
+    null_ls.builtins.diagnostics.codespell,  -- Typo detector in code
+    -- null_ls.builtins.diagnostics.pydocstyle,  -- self-explanatory
+    null_ls.builtins.formatting.stylua,  -- Style checker for Lua
+    null_ls.builtins.formatting.black,  -- Code formatter for Python
+    -- null_ls.builtins.formatting.ruff,  -- Code formatter for Python
+    null_ls.builtins.formatting.usort,  -- Import sorter for Python
+    null_ls.builtins.formatting.prettierd,  -- Formatter for the browser langs (excl. Rust)
+    null_ls.builtins.formatting.gofmt,
+    null_ls.builtins.formatting.golines,
+    null_ls.builtins.formatting.goimports_reviser,
+  }
+})
+
 --- [[ Configure nvim-cmp ]]
 --- See `:help cmp`
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
--- require('luasnip.loaders.from_vscode').lazy_load()
 
 luasnip.config.setup {}
 
